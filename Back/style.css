@@ -1,0 +1,54 @@
+body {
+    color:#ffffff;
+    background-color: rgb(41, 41, 41);
+    margin: 0px;
+}
+.table{
+    display: none;
+}
+table {
+    border: 0;
+    border-collapse: collapse;
+    width: 50vw;
+    margin: 10vh 25vw;
+}
+th {
+    border: solid 1px #ffffff;
+    padding: 1vw;
+}
+td {
+    border: solid 1px #ffffff;
+    text-align: center;
+    padding: 1vw;
+}
+.inputbox {
+    color:#ffffff;
+    background-color: rgb(41, 41, 41);
+    border: none;
+    text-align: center;
+    width: calc(14vw - 14px);
+}
+.inputbox2 {
+    color:#ffffff;
+    background-color: rgb(41, 41, 41);
+    border: none;
+    text-align: center;
+    width: calc(44vw - 90px);
+}
+.incorrect {
+    display: none;
+    font-size: 13px;
+    color: red;
+}
+.Delete {
+    color:#ffffff;
+}
+.Submit {
+    color: white;
+}
+.Login {
+    color: white;
+}
+.Button:hover {
+    background-color: rgb(66, 66, 66);
+}

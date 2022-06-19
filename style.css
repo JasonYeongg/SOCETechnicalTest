@@ -1,0 +1,33 @@
+body {
+    color:#000000;
+    background-color: rgb(255, 255, 255);
+    margin: 0px;
+}
+table {
+    border: 0;
+    border-collapse: collapse;
+    width: 50vw;
+    margin: 10vh 25vw;
+}
+th {
+    border: solid 1px #000000;
+    padding: 1vw;
+}
+td {
+    border: solid 1px #000000;
+    text-align: center;
+    padding: 1vw;
+}
+.inputbox {
+    color:#000000;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    text-align: center;
+    width: calc(14vw - 14px);
+}
+.Submit {
+    color: rgb(0, 0, 0);
+}
+.Button:hover {
+    background-color: #dfdfdf;
+}

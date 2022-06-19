@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Store(ADMIN)</title> 
+<head>
+    <meta charset="UTF-8">
+    <link href="style.css" rel="stylesheet">
+    <title></title>
+</head>
+<body>
+    <table class="usercheck">
+            <tr>
+                <th colspan="4">Store(ADMIN)</th>
+            </tr>
+            <tr>
+                <td>User</td>
+                <td  colspan="2"><input id="user" type="text" placeholder="User" class="inputbox2"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Password</td>
+                <td  colspan="2"><input id="password" type="text" placeholder="Password" class="inputbox2"></td>
+                <td class="Button"><a class="Login" href="javascript: Login();">Login</a></td>
+            </tr>
+            <tr class="incorrect">
+                <th colspan="4">The account information you entered is incorrect</th>
+            </tr>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th colspan="4">Store(ADMIN)</th>
+            </tr>
+            <tr>
+                <td>ID</td>
+                <td>NAME</td>
+                <td>PRICE</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody id="list">
+        </tbody>
+        <tr>
+            <td><input id="id" type="text" placeholder="ID" class="inputbox require-field num"></td>
+            <td><input id="name" type="text" placeholder="NAME" class="inputbox require-field name"></td>
+            <td><input id="price" type="text" placeholder="PRICE" class="inputbox require-field num"></td>
+            <td class="Button"><a class="Submit" href="javascript: Submit();">Put</a></td>
+        </tr>
+    </table>
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    let pass = [];
+    $.getJSON("password.json", function(json) {
+        pass = json;
+    });
+    function Login() {   
+        const user = $("#user").val();
+        const password = $("#password").val();
+        var passcheck = false;
+        for(i in pass) {
+            if (pass[i].user == user && pass[i].password == password){
+                $(".usercheck").css({
+                    'display':'none',
+                });
+                $(".table").css({
+                    'display':'block',
+                });
+                passcheck = true;
+                break;
+            }
+        }
+        if(!passcheck){
+            $(".incorrect").css({
+                'display':'contents',
+            });
+        }
+        $("#user").val('');
+        $("#password").val('');
+    };
+    // ------tbody------
+    let data = [];
+    const list = document.getElementById('list');
+    const DBUrl = 'http://localhost:3000/item';
+    var tbody_html = [];
+    fetch(DBUrl)
+    .then(res => {
+        return res.json();
+    })
+    .then(json => {
+        data = json;
+        showTable(false);
+    })
+    .catch(error => console.log(error))
+    
+    let showTable = () => {
+        data.forEach(item => {
+            tbody_html[item['id']] = `
+            <tr class="Row ${item['id']}">
+                <td>${item['id']}</td>
+                <td>${item['name']}</td>
+                <td>${item['price']}</td>
+                <td class="Button"><a class="Delete" id="${item['id']}" href="javascript: Delete(${item['id']});">Delete</a></td>
+
+            </tr>`;
+        });
+        list.innerHTML = '';
+        for(i in tbody_html) {
+            list.innerHTML += tbody_html[i];
+        }
+    }
+
+    $('.require-field.num').keydown((e) => {
+		var key = e.charCode ? e.charCode : e.keyCode;
+		var length = $(e.target).val().length;
+		if (
+			!(key >= 48 && key <= 57) && key != 8 //delete
+		) {
+			return false;
+		}
+	});
+
+    $('.require-field.name').keydown((e) => {
+		var key = e.charCode ? e.charCode : e.keyCode;
+		var length = $(e.target).val().length;
+		if (
+			!(key >= 65 && key <= 90) && !(key >= 97 && key <= 122) && key != 8 && key != 32 //space
+		) {
+			return false;
+		}
+	});
+    
+    function Submit() {   
+        const Id = $("#id").val();
+        var TypeCheck = false;
+        for(i in data) {
+            if (data[i].id == Id){
+                TypeCheck = true;
+            }
+        }
+        if(!TypeCheck){
+            const AddFact = {
+                "id": $("#id").val(),
+                "name": $("#name").val(),
+                "price": $("#price").val(),
+            }
+            fetch(DBUrl ,{
+                method: 'Post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(AddFact),
+            })
+            .catch(error => console.log(error))
+
+            tbody_html[$("#id").val()] = `
+            <tr class="Row ${$("#id").val()}">
+                <td>${$("#id").val()}</td>
+                <td>${$("#name").val()}</td>
+                <td>${$("#price").val()}</td>
+                <td class="Button"><a class="Delete" id="${$("#id").val()}" href="javascript: Delete(${$("#id").val()});">Delete</a></td>
+            </tr>`;
+            list.innerHTML = '';
+            for(i in tbody_html) {
+                list.innerHTML += tbody_html[i];
+            }
+        }else{
+            const AddFact = {
+                "name": $("#name").val(),
+                "price": $("#price").val(),
+            }
+            fetch(DBUrl.concat("/",Id) ,{
+                method: 'Put',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(AddFact),
+            }) 
+            .catch(error => console.log(error)) 
+            list.innerHTML = '';
+            for(i in tbody_html) {
+                if (i == Id) { 
+                    tbody_html[$("#id").val()] = `
+                        <tr class="Row ${$("#id").val()}">
+                            <td>${$("#id").val()}</td>
+                            <td>${$("#name").val()}</td>
+                            <td>${$("#price").val()}</td>
+                            <td class="Button"><a class="Delete" id="${$("#id").val()}" href="javascript: Delete(${$("#id").val()});">Delete</a></td>
+                        </tr>`;
+                }
+                list.innerHTML += tbody_html[i];
+            }
+        }
+        $("#id").val('');
+        $("#name").val('');
+        $("#price").val('');
+    };
+
+    function Delete(x) {
+        list.innerHTML = '';
+		delete tbody_html[x];
+        for(i in tbody_html) {
+            list.innerHTML += tbody_html[i];
+        }
+        fetch(DBUrl.concat("/",x) ,{
+            method: 'Delete',
+        })
+        .catch(error => console.log(error))
+    };
+    
+</script>  
+
+
+
